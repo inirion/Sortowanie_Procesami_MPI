@@ -149,7 +149,6 @@ int main() {
 			}
 		}
 	}
-	cout << iteracja << endl;
 	if (iteracja == 2) {
 		while (size >= 2) {//dopuki wielkosc bêdzie wieksza od 2 ( w tym wypadku wielkosc 2 to nie ilosc procesow tylko ilosc procesow -1)
 			if (rank == 0) {//jezeli jestesmy w roocie
