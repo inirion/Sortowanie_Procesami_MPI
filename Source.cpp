@@ -113,9 +113,7 @@ int main() {
 	}
 	MPI_Comm_size(MPI_COMM_WORLD, &size);
 	MPI_Comm_size(MPI_COMM_WORLD, &tempSize);
-
 	MPI_Comm_rank(MPI_COMM_WORLD, &rank);
-
 	srand((unsigned)time(NULL) + rank*size);
 	if (iteracja == 1) {//inicjalizacja tablicy i pierwsze rozes³anie danych do procesów 
 		if (rank == 0) {
@@ -149,12 +147,10 @@ int main() {
 				MPI_Send(&recvBuff1[0], recvBuff1.size(), MPI_INT, 0, END, MPI_COMM_WORLD);
 				iteracja = 3;
 			}
-			
 		}
 	}
 	cout << iteracja << endl;
 	if (iteracja == 2) {
-		
 		while (size >= 2) {//dopuki wielkosc bêdzie wieksza od 2 ( w tym wypadku wielkosc 2 to nie ilosc procesow tylko ilosc procesow -1)
 			if (rank == 0) {//jezeli jestesmy w roocie
 				map<int, vector<int>> recvBuffChunks;
@@ -173,7 +169,6 @@ int main() {
 						recvBuffChunks[i].resize(NumOfEl);
 						MPI_Recv(&recvBuffChunks[i][0], recvBuffChunks[i].size(), MPI_INT, i, 0, MPI_COMM_WORLD, &status);
 					}
-
 				}
 				lastProcValue = size;//ostatnia ilosc procesorow pracowników.
 				if (count == 0) {//jezeli jestesmy tutaj 1 raz to zaokraglamy do gory i ustawiamy ilosc procesorow (pracownikow) o jeden mniejsza.
@@ -199,7 +194,6 @@ int main() {
 						lastOne = 2;
 					}
 				}
-
 				for (int i = 1; i < tempSize; i++) {//wyslanie do procesow wiadomosci o fladze oraz ilosci procesow jakie beda wykonywa³y sortowanie.
 					MPI_Send(&size, 1, MPI_INT, i, lastOne, MPI_COMM_WORLD);
 				}
@@ -224,7 +218,6 @@ int main() {
 								MPI_Send(&recvBuffChunks[k + 1][0], recvBuffChunks[k + 1].size(), MPI_INT, i, 0, MPI_COMM_WORLD);
 							}
 						}
-
 				}
 			}
 			if (rank != 0) {//odbieranie danych
@@ -234,7 +227,7 @@ int main() {
 					ReciveMessageArray(recvBuff1, 0, MPI_ANY_TAG, &status);
 					ReciveMessageArray(recvBuff2, 0, MPI_ANY_TAG, &status);
 					merged.resize(recvBuff1.size() + recvBuff2.size());
-					merge(recvBuff1, recvBuff1.size(), recvBuff2, recvBuff2.size(), merged);
+					merge(recvBuff1, recvBuff1.size(), recvBuff2, recvBuff2.size(), merged);//laczenie posortowanych tablic w jedna posortowana
 					MPI_Send(&merged[0], merged.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
 				}
 				if (rank <= size && size != 1 && status.MPI_TAG == 2) {
@@ -242,22 +235,19 @@ int main() {
 						ReciveMessageArray(recvBuff1, 0, 0, &status);
 						ReciveMessageArray(recvBuff2, 0, 0, &status);
 						merged.resize(recvBuff1.size() + recvBuff2.size());
-						merge(recvBuff1, recvBuff1.size(), recvBuff2, recvBuff2.size(), merged);
+						merge(recvBuff1, recvBuff1.size(), recvBuff2, recvBuff2.size(), merged);//laczenie posortowanych tablic w jedna posortowana
+						MPI_Send(&merged[0], merged.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
 					}
-					else if (rank == size) {
+					else if (rank == size) {// jezeli odebralismy tylko 1 tablice z wartosciami przesylamy ja dalej bo jest posortowana
 						ReciveMessageArray(recvBuff1, 0, 0, &status);
-						for (i = 0; i < recvBuff1.size(); i++) {
-							merged.push_back(recvBuff1[i]);
-						}
+						MPI_Send(&recvBuff1[0], recvBuff1.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
 					}
-					HeapSort(merged);
-					MPI_Send(&merged[0], merged.size(), MPI_INT, 0, 0, MPI_COMM_WORLD);
 				}
 				if (size == 1 && rank == 1) {//gdy zosta³y ostanie dwie wartosci w jedym procesie
 					ReciveMessageArray(recvBuff1, 0, 0, &status);
 					ReciveMessageArray(recvBuff2, 0, 0, &status);
 					merged.resize(recvBuff1.size() + recvBuff2.size());
-					merge(recvBuff1, recvBuff1.size(), recvBuff2, recvBuff2.size(), merged);
+					merge(recvBuff1, recvBuff1.size(), recvBuff2, recvBuff2.size(), merged);//laczenie posortowanych tablic w jedna posortowana
 					MPI_Send(&merged[0], merged.size(), MPI_INT, 0, END, MPI_COMM_WORLD);
 				}
 				else {//wszystkie inne procesy poza tymi wyznaczonymi sa nieczynne(zakoczy³y pracê)
