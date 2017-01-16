@@ -1,5 +1,5 @@
 ﻿  Source.cpp
-c:\users\grzegorz kokoszka\documents\visual studio 2015\projects\mpitest\mpitest\source.cpp(251): warning C4018: '<': signed/unsigned mismatch
+c:\users\grzegorz kokoszka\documents\visual studio 2015\projects\mpitest\mpitest\source.cpp(249): warning C4018: '<': signed/unsigned mismatch
 c:\users\grzegorz kokoszka\documents\visual studio 2015\projects\mpitest\mpitest\source.cpp(104): warning C4101: 'j': unreferenced local variable
 c:\users\grzegorz kokoszka\documents\visual studio 2015\projects\mpitest\mpitest\source.cpp(104): warning C4101: 'flaga': unreferenced local variable
   MpiTest.vcxproj -> C:\Users\Grzegorz Kokoszka\documents\visual studio 2015\Projects\MpiTest\Debug\MpiTest.exe
